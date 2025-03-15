@@ -46,7 +46,7 @@ function Tiles({ rowIndex, savedGuess, currentGuess, currentRow, solution }) {
 
 function fetchWords() {
   const url =
-    import.meta.env.REACT_APP_WORDLE_WORDS_API_URL || "/api/fe/wordle-words";
+    import.meta.env.VITE_WORDLE_WORDS_API_URL || "/api/fe/wordle-words";
   return new Promise((resolve, reject) => {
     fetch(url)
       .then((response) => {
