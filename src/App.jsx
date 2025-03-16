@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import "./App.css";
 import { useState } from "react";
 
@@ -93,13 +93,19 @@ function Wordle({ solution, handleShowSolution }) {
   const [currentRow, setCurrentRow] = useState(0);
   const [savedGuess, setSavedGuess] = useState([...Array(ROWSIZE).fill("")]);
 
+  const rows = Array.from({ length: ROWSIZE });
+
+  useEffect(() => {
+    setCurrentGuess("");
+    setCurrentRow(0);
+    setSavedGuess([...Array(ROWSIZE).fill("")]);
+  }, [solution]);
+
   useEffect(() => {
     if (currentRow >= ROWSIZE) {
       handleShowSolution();
     }
   }, [currentRow, handleShowSolution]);
-
-  const rows = Array.from({ length: ROWSIZE });
 
   useEffect(() => {
     const pushToCurrentGuess = (letter) => {
@@ -161,17 +167,28 @@ function NewGame({ handleOnClick }) {
 
 function App() {
   const [wordList, setWordList] = useState([]);
-  const [showSolution, setShowSolution] = useState(false);
   const [solution, setSolution] = useState("");
-  const handleShowSolution = () => {
-    setShowSolution(true);
-  };
+  const [showSolution, setShowSolution] = useState(false);
 
-  const handleOnClick = () => {
-    const resetGame = () => {};
+  const handleShowSolution = useCallback(() => {
+    setShowSolution((prev) => {
+      if (prev === false) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }, []);
+
+  const handleOnClick = useCallback(() => {
+    const resetGame = () => {
+      const newSolution = wordList[Math.floor(Math.random() * wordList.length)];
+      setSolution(newSolution);
+      setShowSolution(false);
+    };
 
     resetGame();
-  };
+  }, [wordList]);
 
   useEffect(() => {
     fetchWords()
